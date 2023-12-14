@@ -1,0 +1,8 @@
+<RCC>
+  <qresource prefix="AllResources">
+    <file>qrcode.png</file>
+    <file>qrcg-sample.png</file>
+    <file>pix.png</file>
+    <file>Logo.png</file>
+  </qresource>
+</RCC>
