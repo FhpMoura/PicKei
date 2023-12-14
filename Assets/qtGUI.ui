@@ -357,7 +357,7 @@ color:  rgba(255, 255, 255, 1)</string>
      <string>Seu saldo atual</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_3">
+   <widget class="QLabel" name="QL_Dinheiro">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -434,7 +434,7 @@ color:  rgba(255, 255, 255, 1)</string>
      <string>Seus cartões</string>
     </property>
    </widget>
-   <widget class="QFrame" name="frame">
+   <widget class="QFrame" name="QF_LogoTop">
     <property name="geometry">
      <rect>
       <x>0</x>
