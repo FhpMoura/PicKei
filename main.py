@@ -1,9 +1,10 @@
-from PyQt5.QtWidgets import QMainWindow, QApplication, QFrame, QLabel
+from PyQt5.QtWidgets import QMainWindow, QWidget, QLineEdit, QVBoxLayout, QApplication, QFrame, QLabel, QPushButton
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import QTimer
 from PyQt5 import uic
+import os
+import subprocess
 import random
-import time
 import sys
 
 CharactersList = {
@@ -36,17 +37,22 @@ class MainWindow(QMainWindow):
         
         self.QL_Dinheiro = self.findChild(QLabel, 'QL_Dinheiro')
         self.QL_Nome = self.findChild(QLabel, 'QL_Nome')
-        self.QL_Dinheiro.setText("R$0")
+        self.QL_Valor = self.findChild(QLabel, 'QL_Valor')
+        self.QL_Descricao = self.findChild(QLabel, 'QL_Descricao')
         self.QF_LogoTop = self.findChild(QFrame, 'QF_LogoTop')
+        self.QL_SenderPix = self.findChild(QLabel, 'QL_SenderPix')
+        self.QPB_Deposito = self.findChild(QPushButton, 'QPB_Deposito')
+        self.QPB_EnviarPix = self.findChild(QPushButton, 'QPB_EnviarPix')
+
+        self.QL_Dinheiro.setText("R$0")
         self.setLogoTop()
-        
         self.DinheiroAtual = 0
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.receberPix)
-        
+        self.QPB_Deposito.clicked.connect(self.abrirKeilinho)
+        self.QPB_EnviarPix.clicked.connect(self.enviarPix)
         #Recebe um pix a cada 15 segundos
-        self.timer.start(3000)
-       
+        self.timer.start(7000)
         
 
     def receberPix(self):
@@ -56,19 +62,37 @@ class MainWindow(QMainWindow):
 
         self.SenderPix = random.choice(list(CharactersList.keys()))
         self.QL_Nome.setText(f"Nome: {self.SenderPix}")
+        self.QL_Valor.setText(f"Valor: R${valuePix},00")
+        self.QL_Descricao.setText(f"Descrição: {CharactersList[self.SenderPix][0]}")
 
+        pixmap = QPixmap(CharactersList[self.SenderPix][1])
+        label = QLabel(self.QL_SenderPix)
+        label.setPixmap(pixmap)
+        label.setGeometry(0, 0, self.QL_SenderPix.width(), self.QL_SenderPix.height())
+        label.setScaledContents(True) 
+        label.show()
+
+    def abrirKeilinho(self):
+        os.startfile('deposito.png')
 
     def setLogoTop(self):
         #QLabel em cima do QFrame setado as dimensões (LogoTop)
-        pixmap = QPixmap('F:\Projetos\Python\PicKei\Assets\Logo.png')
+        pixmap = QPixmap(r'.\Assets\Logo.png')
         label = QLabel(self.QF_LogoTop)
         label.setPixmap(pixmap)
         label.setGeometry(5, 0, self.QF_LogoTop.width() - 25, self.QF_LogoTop.height())
         print("Dimensões QF_LogoTop: ", self.QF_LogoTop.width() - 25, self.QF_LogoTop.height())
         label.setScaledContents(True) 
     
-    def setLogoPix(self):
-        print("AAAAAAAAAAAAAAAAAAAAAAAA VAI SE FUDEEEE")
+    def enviarPix(self):
+        result = subprocess.run(['cscript.exe', r'.\Inspec\script.vbs'], capture_output=True, text=True)
+        output = result.stdout.splitlines()
+
+        self.dinheiroEnviado = int(output[4])
+        self.DinheiroAtual -= self.dinheiroEnviado
+
+        print(result)
+        print(output)
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
